@@ -1,6 +1,7 @@
 import json
 def lambda_handler(event, context):
     token = event['authorizationToken']
+    print("El evento:", event, "Token:", token)
     # Usar token
     if token == 'allow':
         policy = gen_policy('Allow', event['methodArn'])
