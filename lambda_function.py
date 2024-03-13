@@ -1,37 +1,41 @@
 import json
+
 def lambda_handler(event, context):
     token = event['authorizationToken']
-    print("El evento:", event, "Token:", token)
-    # Usar token
     if token == 'allow':
-        policy = gen_policy('Allow', event['methodArn'])
-        principal_id = 'Admin'
-        context = {'simpleAuth': True}
-        response = {
-            'principalId': principal_id,
-            'policyDocument': policy,
-            'context': context
-        }
-        return response
+        print('authorized')
+        response = generatePolicy('user', 'Allow', event['methodArn'])
     elif token == 'deny':
-        policy = gen_policy('Deny', event['methodArn'])
-        principal_id = 'DenyToken'
-        context = {'simpleAuth': True}
-        response = {
-            'principalId': principal_id,
-            'policyDocument': policy,
-            'context': context
-        }
-        return response
-    else:
-        raise Exception('Unauthorized')
-def gen_policy(effect, resource):
-    policy = {
-        'Version': '2012-10-17',
-        'Statement': [{
-            'Action': 'execute-api:Invoke',
-            'Effect': effect,
-            'Resource': resource
-        }]
+        print('unauthorized')
+        response = generatePolicy('user', 'Deny', event['methodArn'])
+    elif token == 'unauthorized':
+        print('unauthorized')
+        raise Exception('Unauthorized')  # Return a 401 Unauthorized response
+        return 'unauthorized'
+    try:
+        return json.loads(response)
+    except BaseException:
+        print('unauthorized')
+        return 'unauthorized'  # 
+
+
+def generatePolicy(principalId, effect, resource):
+    authResponse = {}
+    authResponse['principalId'] = principalId
+    if (effect and resource):
+        policyDocument = {}
+        policyDocument['Version'] = '2012-10-17'
+        policyDocument['Statement'] = []
+        statementOne = {}
+        statementOne['Action'] = 'execute-api:Invoke'
+        statementOne['Effect'] = effect
+        statementOne['Resource'] = resource
+        policyDocument['Statement'] = [statementOne]
+        authResponse['policyDocument'] = policyDocument
+    authResponse['context'] = {
+        "stringKey": "stringval",
+        "numberKey": 123,
+        "booleanKey": True
     }
-    return policy
+    authResponse_JSON = json.dumps(authResponse)
+    return authResponse_JSON
