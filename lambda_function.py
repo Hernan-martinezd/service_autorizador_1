@@ -2,6 +2,7 @@ import json
 
 def lambda_handler(event, context):
     token = event['authorizationToken']
+    print("Valor del token:", token)
     if token == 'allow':
         print('authorized')
         response = generatePolicy('user', 'Allow', event['methodArn'])
