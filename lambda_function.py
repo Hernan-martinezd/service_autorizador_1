@@ -6,8 +6,10 @@ dynamoDB = boto3.client('dynamodb')
 def lambda_handler(event, context):
     print(event)
     print(context)
-    username = event['username']
-    token = event['authorizationToken']
+
+    headers = event['headers']
+    username = headers['username']
+    token = headers['authorizationToken']
 
     params = {
         "TableName": "deportistas", "key": {"username": username}
