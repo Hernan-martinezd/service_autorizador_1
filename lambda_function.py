@@ -32,7 +32,7 @@ def lambda_handler(event, context):
 
     if int(total_requests) >= 6:
        
-        return 'forbidden'
+        return {'message': 'forbidden'}
     elif token == 'allow':
         print('authorized')
         response = generatePolicy('user', 'Allow', event['methodArn'])
