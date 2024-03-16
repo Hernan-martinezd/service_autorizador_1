@@ -34,7 +34,7 @@ def lambda_handler(event, context):
             TableName = "usuarios",
             Key = {"username": {"S": username}},
             UpdateExpression="set total_requests=:t",
-            ExpressionAttributeValues={":t": {'N':str(0)}},
+            ExpressionAttributeValues={":t": {'N':'0'}},
             ReturnValues="UPDATED_NEW",
             )
 
