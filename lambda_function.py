@@ -14,8 +14,7 @@ def lambda_handler(event, context):
     try:
         response_DB = dynamoDB.get_item(
             TableName = "usuarios",
-            Key = {"username": {"S": username}}    
-            
+            Key = {"username": {"S": username}}        
         )  
         print(response_DB)
     except Exception as e:
@@ -28,14 +27,16 @@ def lambda_handler(event, context):
         # response_DB = json.dumps(response_DB)
         # total_requests = response_DB['total_requests']
         
-    if total_requests >= 4:
+    if int(total_requests) >= 4:
         return 'forbidden'
     elif token == 'allow':
-        response_DB = dynamoDB.get_item(
+        response_DB = dynamoDB.update_item(
             TableName = "usuarios",
-            Key = {"username": {"S": username}, "total_requests": {"N": 0}}
+            Key = {"username": {"S": username}},
+            UpdateExpression="set usuarios.total_request=:t",
+            ExpressionAttributeValues={":t": 0}
         )
-          
+
         print('authorized')
         response = generatePolicy('user', 'Allow', event['methodArn'])
     elif token == 'deny':
@@ -44,8 +45,9 @@ def lambda_handler(event, context):
     elif token == 'unauthorized':
         response_DB = dynamoDB.update_item(
             TableName = "usuarios",
-            Key = {"username": {"S": username}, "total_requests": {"N": total_requests+1}},    
-            
+            Key = {"username": {"S": username}},
+            UpdateExpression="set usuarios.total_request=:t",
+            ExpressionAttributeValues={":t": total_requests+1},
         )  
 
         print('unauthorized')
