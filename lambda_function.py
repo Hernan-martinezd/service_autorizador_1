@@ -26,18 +26,25 @@ def lambda_handler(event, context):
         # response_DB = {key: value['S'] for key, value in response_DB.items()}
         # response_DB = json.dumps(response_DB)
         # total_requests = response_DB['total_requests']
-        
+
+    response_DB = dynamoDB.update_item(
+        TableName = "usuarios",
+        Key = {"username": {"S": username}},
+        UpdateExpression="set total_requests=:t",
+        ExpressionAttributeValues={":t": {'N':'0'}},
+        ReturnValues="UPDATED_NEW",
+        )
+
     if int(total_requests) >= 4:
-        return 'forbidden'
-    elif token == 'allow':
         response_DB = dynamoDB.update_item(
             TableName = "usuarios",
             Key = {"username": {"S": username}},
             UpdateExpression="set total_requests=:t",
-            ExpressionAttributeValues={":t": {'N':'0'}},
+            ExpressionAttributeValues={":t": {'N':str(int(total_requests)+1)}},
             ReturnValues="UPDATED_NEW",
-            )
-
+        )
+        return 'forbidden'
+    elif token == 'allow':
         print('authorized')
         response = generatePolicy('user', 'Allow', event['methodArn'])
     elif token == 'deny':
