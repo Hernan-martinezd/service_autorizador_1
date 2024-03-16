@@ -1,15 +1,19 @@
+import boto3
 import json
-import os
 
-contador_requests = os.environ['CONTADOR_REQUESTS']
-
+dynamoDB = boto3.client('dynamodb')
 
 def lambda_handler(event, context):
+    username = event['username']
     token = event['authorizationToken']
-    print(contador_requests)
-    if int(contador_requests) >= 3:
-        return 'Forbidden'
-    elif token == 'allow':
+
+    params = {
+        "TableName": "deportistas", "key": {"username": username}
+    }
+    response_DB = dynamoDB.get_item(**params)
+    print(response_DB)
+
+    if token == 'allow':
         print('authorized')
         response = generatePolicy('user', 'Allow', event['methodArn'])
     elif token == 'deny':
@@ -17,7 +21,6 @@ def lambda_handler(event, context):
         response = generatePolicy('user', 'Deny', event['methodArn'])
     elif token == 'unauthorized':
         print('unauthorized')
-        os.environ['CONTADOR_REQUESTS'] = str(int(contador_requests) + 1)
         raise Exception('Unauthorized')  # Return a 401 Unauthorized response
         return 'unauthorized'
     try:
