@@ -28,7 +28,7 @@ def lambda_handler(event, context):
         # total_requests = response_DB['total_requests']
     total = 0
 
-    if int(total_requests) >= 4:
+    if int(total_requests) >= 6:
        
         return 'forbidden'
     elif token == 'allow':
