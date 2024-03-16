@@ -34,7 +34,7 @@ def lambda_handler(event, context):
             TableName = "usuarios",
             Key = {"username": {"S": username}},
             UpdateExpression="set usuarios.total_request=:t",
-            ExpressionAttributeValues={":t": 0}
+            ExpressionAttributeValues={":t": {'N':0}}
         )
 
         print('authorized')
@@ -47,8 +47,8 @@ def lambda_handler(event, context):
             TableName = "usuarios",
             Key = {"username": {"S": username}},
             UpdateExpression="set usuarios.total_request=:t",
-            ExpressionAttributeValues={":t": total_requests+1},
-        )  
+            ExpressionAttributeValues={":t": {'N':total_requests+1}},
+        )
 
         print('unauthorized')
         raise Exception('Unauthorized')  # Return a 401 Unauthorized response
