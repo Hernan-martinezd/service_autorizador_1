@@ -51,7 +51,7 @@ def lambda_handler(event, context):
             ExpressionAttributeValues={":t": {'N':str(total)}},
             ReturnValues="UPDATED_NEW",
         )
-        # Exception('Unauthorized')  # Return a 401 Unauthorized response
+        raise Exception('Unauthorized')  # Return a 401 Unauthorized response
         return 'unauthorized'
     try:
         response_DB = dynamoDB.update_item(
