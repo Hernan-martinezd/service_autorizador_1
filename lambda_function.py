@@ -1,8 +1,15 @@
 import json
+import os
+
+contador_requests = os.environ['CONTADOR_REQUESTS']
+
 
 def lambda_handler(event, context):
     token = event['authorizationToken']
-    if token == 'allow':
+    print(contador_requests)
+    if int(contador_requests) >= 3:
+        return 'Forbidden'
+    elif token == 'allow':
         print('authorized')
         response = generatePolicy('user', 'Allow', event['methodArn'])
     elif token == 'deny':
@@ -10,6 +17,7 @@ def lambda_handler(event, context):
         response = generatePolicy('user', 'Deny', event['methodArn'])
     elif token == 'unauthorized':
         print('unauthorized')
+        os.environ['CONTADOR_REQUESTS'] = str(int(contador_requests) + 1)
         raise Exception('Unauthorized')  # Return a 401 Unauthorized response
         return 'unauthorized'
     try:
