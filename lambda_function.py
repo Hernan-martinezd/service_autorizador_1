@@ -12,7 +12,7 @@ def lambda_handler(event, context):
     token = headers['authorizationToken']
 
     params = {
-        "TableName": "deportistas", "key": {"username": username}
+        "TableName": "deportistas", "Key": {"username": username}
     }
     response_DB = dynamoDB.get_item(**params)
     print(response_DB)
