@@ -34,7 +34,7 @@ def lambda_handler(event, context):
             TableName = "usuarios",
             Key = {"username": {"S": username}},
             UpdateExpression="set usuarios.total_request=:t",
-            ExpressionAttributeValues={":t": {'S':0}}
+            ExpressionAttributeValues={":t": {'N':str(0)}}
         )
 
         print('authorized')
@@ -47,7 +47,7 @@ def lambda_handler(event, context):
             TableName = "usuarios",
             Key = {"username": {"S": username}},
             UpdateExpression="set usuarios.total_request=:t",
-            ExpressionAttributeValues={":t": {'S':int(total_requests)+1}},
+            ExpressionAttributeValues={":t": {'N':str(int(total_requests)+1)}},
         )
 
         print('unauthorized')
