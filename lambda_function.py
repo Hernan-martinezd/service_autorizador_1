@@ -11,10 +11,11 @@ def lambda_handler(event, context):
     username = headers['username']
     token = headers['authorizationToken']
 
-    params = {
-        "TableName": "deportistas", "Key": {"username": username}
-    }
-    response_DB = dynamoDB.get_item(**params)
+    response_DB = dynamoDB.get_item(
+        TableName = "deportistas",
+        Key = {"username": {"S": username}}    
+        
+    )  
     print(response_DB)
 
     if token == 'allow':
