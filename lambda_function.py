@@ -44,7 +44,14 @@ def lambda_handler(event, context):
         total= int(total_requests)+1   
 
         print('unauthorized')
-        raise Exception('Unauthorized')  # Return a 401 Unauthorized response
+        response_DB = dynamoDB.update_item(
+            TableName = "usuarios",
+            Key = {"username": {"S": username}},
+            UpdateExpression="set total_requests=:t",
+            ExpressionAttributeValues={":t": {'N':str(total)}},
+            ReturnValues="UPDATED_NEW",
+        )
+        # Exception('Unauthorized')  # Return a 401 Unauthorized response
         return 'unauthorized'
     try:
         response_DB = dynamoDB.update_item(
