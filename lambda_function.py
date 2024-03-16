@@ -33,7 +33,7 @@ def lambda_handler(event, context):
         response_DB = dynamoDB.update_item(
             TableName = "usuarios",
             Key = {"username": {"S": username}},
-            UpdateExpression="set usuarios.total_request=:t",
+            UpdateExpression="set total_request=:t",
             ExpressionAttributeValues={":t": {'N':str(0)}},
             ReturnValues="UPDATED_NEW",
             )
@@ -47,7 +47,7 @@ def lambda_handler(event, context):
         response_DB = dynamoDB.update_item(
             TableName = "usuarios",
             Key = {"username": {"S": username}},
-            UpdateExpression="set usuarios.total_request=:t",
+            UpdateExpression="set total_request=:t",
             ExpressionAttributeValues={":t": {'N':str(int(total_requests)+1)}},
             ReturnValues="UPDATED_NEW",
         )
