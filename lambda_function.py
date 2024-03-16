@@ -24,10 +24,10 @@ def lambda_handler(event, context):
         return 'unauthorized'
     total_requests = 0
     if 'Item' in response_DB:
-        total_requests = response_DB['Item']['total_requests']['N']
-        # response_DB = {key: value['S'] for key, value in response_DB.items()}
-        # response_DB = json.dumps(response_DB)
-        # total_requests = response_DB['total_requests']
+    #    total_requests = response_DB['Item']['total_requests']['N']
+         response_DB = {key: value['S'] for key, value in response_DB.items()}
+         response_DB = json.dumps(response_DB)
+         total_requests = response_DB['total_requests']['N']
     total = 0
 
     if int(total_requests) >= 6:
