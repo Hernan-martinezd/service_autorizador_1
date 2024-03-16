@@ -27,9 +27,6 @@ def lambda_handler(event, context):
         # response_DB = json.dumps(response_DB)
         # total_requests = response_DB['total_requests']
 
-    total = 0
-    
-
     if int(total_requests) >= 4:
        
         return 'forbidden'
@@ -41,19 +38,14 @@ def lambda_handler(event, context):
         response = generatePolicy('user', 'Deny', event['methodArn'])
     elif token == 'unauthorized':
 
-        total= int(total_requests)+1   
+         
 
         print('unauthorized')
-        response_DB = dynamoDB.update_item(
-            TableName = "usuarios",
-            Key = {"username": {"S": username}},
-            UpdateExpression="set total_requests=:t",
-            ExpressionAttributeValues={":t": {'N':str(total)}},
-            ReturnValues="UPDATED_NEW",
-        )
-        # raise Exception('Unauthorized')  # Return a 401 Unauthorized response
+        
+        raise Exception('Unauthorized')  # Return a 401 Unauthorized response
         return 'unauthorized'
     try:
+        total= int(total_requests)+1 
         response_DB = dynamoDB.update_item(
             TableName = "usuarios",
             Key = {"username": {"S": username}},
@@ -64,6 +56,13 @@ def lambda_handler(event, context):
         return json.loads(response)
     except BaseException:
         print('unauthorized')
+        response_DB = dynamoDB.update_item(
+            TableName = "usuarios",
+            Key = {"username": {"S": username}},
+            UpdateExpression="set total_requests=:t",
+            ExpressionAttributeValues={":t": {'N':'0'}},
+            ReturnValues="UPDATED_NEW",
+        )
         return 'unauthorized'  # 
 
 
